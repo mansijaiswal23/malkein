@@ -3,6 +3,7 @@ import { Trash2, Plus, Minus } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import { useCart } from "../../context/CartContext";
 import EmptyCart from "../Cart/EmptyCart";
+import { ImageToggle } from "../../components/ImageToggle";
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, cartCount } = useCart();
@@ -43,14 +44,9 @@ export default function CartPage() {
                 className="flex gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
               >
                 {/* Thumbnail - using image1 URL directly from JSON */}
-                <div className="w-24 h-28 rounded-xl bg-[#fce8e8] overflow-hidden shrink-0">
-                  <img
-                    src={item.image1}
-                    alt={item.name}
-                    className="w-full h-full object-cover object-top"
-                    onError={(e) => (e.target.style.display = "none")}
-                  />
-                </div>
+                <div className="w-24 h-28 rounded-xl bg-[#fce8e8] overflow-hidden shrink-0 relative">
+  <ImageToggle image1={item.image1} image2={item.image2} />
+</div>
 
                 {/* Info */}
                 <div className="flex-1 flex flex-col justify-between">

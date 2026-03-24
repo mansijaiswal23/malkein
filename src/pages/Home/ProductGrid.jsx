@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import products from "../../data/products.json";
 import { Star, Plus } from 'lucide-react';
+import { ImageToggle } from '../../components/ImageToggle';
 
 
 function StarRating({ rating }) {
@@ -23,7 +25,7 @@ function StarRating({ rating }) {
 
 export default function ProductsGrid() {
   const navigate = useNavigate();
-    
+  const [activeId, setActiveId] = useState({});    
   return (
     <div className="px-3 md:px-6 mt-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -34,26 +36,38 @@ export default function ProductsGrid() {
             <div className="bg-[#FF00001F] rounded-3xl overflow-visible relative flex items-end justify-center pt-4 px-4 h-44 md:h-64 group">
 
               {/* Clip only the image */}
-              <div className="absolute inset-0 rounded-3xl overflow-hidden group">
+             <div
+  // className="absolute inset-0 rounded-3xl overflow-hidden group cursor-pointer"
+//   onClick={() =>
+//   setActiveId(prev => ({
+//     ...prev,
+//     [item.id]: !prev[item.id]
+//   }))
+// }
+>
+  {/* First Image */}
+  {/* <img
+    src={item.image1}
+    alt={item.name}
+    className={`w-full h-full object-contain object-bottom absolute inset-0 transition-opacity duration-500 ${
+    activeId[item.id] ? "opacity-0" : "opacity-100"
+  }`}
+  /> */}
 
-                {/* First Image */}
-                <img
-                  src={item.image1}
-                  alt={item.name}
-                  className="w-full h-full object-contain object-bottom absolute inset-0 transition-all duration-500 group-hover:opacity-0 group-hover:scale-95"
-                />
-                
-
-                {/* Second Image */}
-                {item.image2 && (
-                  <img
-                    src={item.image2}
-                    alt={item.name}
-                    className="w-full h-full object-contain object-bottom absolute inset-0 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-95"
-                  />
-                )}
-
-              </div>
+  {/* Second Image */}
+  {/* {item.image2 && (
+    <img
+      src={item.image2}
+      alt={item.name}
+      className={`w-full h-full object-contain object-bottom absolute inset-0 transition-opacity duration-500 ${
+      activeId[item.id] ? "opacity-100" : "opacity-0"
+    }`}
+    />
+  )} */}
+  <div className="absolute inset-0 rounded-3xl overflow-hidden">
+    <ImageToggle image1={item.image1} image2={item.image2} />
+  </div>
+</div>
 
               {/* Buy now button */}
               <button

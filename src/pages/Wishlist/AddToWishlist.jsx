@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import { useWishlist } from "../../context/WishlistContext";
+import { ImageToggle } from "../../components/ImageToggle";
 
 export default function AddToWishlist() {
   const { wishlistItems, removeFromWishlist } = useWishlist();
@@ -34,21 +35,9 @@ export default function AddToWishlist() {
               className="flex gap-4 items-center border border-gray-100 rounded-2xl p-3 shadow-sm hover:shadow-md transition-shadow"
             >
               {/* Product image */}
-              <div
-                onClick={() => navigate(`/product/${item.id}`)}
-                className="w-24 h-24 shrink-0 bg-[#fce8e8] rounded-xl overflow-hidden cursor-pointer group relative"
-              >
-                <img
-                  src={item.image1}
-                  alt={item.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-                />
-                <img
-                  src={item.image2}
-                  alt={item.name}
-                  className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                />
-              </div>
+              <div className="w-24 h-28 rounded-xl bg-[#fce8e8] overflow-hidden shrink-0 relative">
+  <ImageToggle image1={item.image1} image2={item.image2} />
+</div>
 
               {/* Product info */}
               <div

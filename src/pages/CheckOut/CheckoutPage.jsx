@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapPin, Package, Clock, ChevronRight, CheckCircle, Truck, Shield } from "lucide-react";
 import Navbar from "../Home/Navbar";
+import { ImageToggle } from "../../components/ImageToggle";
 
 const DELIVERY_OPTIONS = [
   {
@@ -142,13 +143,9 @@ export default function CheckoutPage() {
             <div className="flex flex-col gap-4">
               {items.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-white rounded-xl overflow-hidden shrink-0">
-                    <img
-                      src={item.image1}
-                      alt={item.name}
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
+                  <div className="w-16 h-20 bg-[#fce8e8] rounded-xl overflow-hidden shrink-0">
+  <ImageToggle image1={item.image1} image2={item.image2} />
+</div>
                   <div className="flex-1">
                     <p className="font-semibold text-gray-900 text-sm leading-snug">{item.name}</p>
                     <p className="text-xs text-gray-500">

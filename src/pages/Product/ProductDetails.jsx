@@ -10,7 +10,7 @@ import paytm from "../../../src/assets/images/paytm.png";
 import message from "../../../src/assets/images/message.png";
 import flag from "../../../src/assets/images/flag.png";
 import { useWishlist } from "../../context/WishlistContext";
-
+import {ImageToggle} from "../../components/ImageToggle"
 export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -111,25 +111,14 @@ fill={isInWishlist(product.id) ? "#CC0000" : "none"}
 
             {/* //active setActive */}
 
-         <div
-      className="w-full aspect-square bg-[#fce8e8] rounded-3xl overflow-hidden relative group"
-      onClick={() => setIsActive(!isActive)}
-    >
-      <img
-        src={product.image1}
-        alt={product.name}
-        className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${
-          isActive ? "opacity-0" : "opacity-100"
-        } md:group-hover:opacity-0`}
-      />
-      <img
-        src={product.image2}
-        alt={product.name}
-        className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${
-          isActive ? "opacity-100" : "opacity-0"
-        } md:group-hover:opacity-100`}
-      />
-    </div>
+        <div
+  className="w-full aspect-square bg-[#fce8e8] rounded-3xl overflow-hidden relative group cursor-pointer"
+  
+><div className="w-full aspect-square bg-[#fce8e8] rounded-3xl overflow-hidden relative">
+  <ImageToggle image1={product.image1} image2={product.image2} />
+</div>
+  
+</div>
 
             {/* Colors */}
             <div className="flex gap-3 mt-4 flex-wrap">
@@ -252,16 +241,9 @@ fill={isInWishlist(product.id) ? "#CC0000" : "none"}
               className="cursor-pointer group"
             >
               <div className="w-full aspect-square bg-[#fce8e8] rounded-3xl overflow-hidden relative">
-                <img
-                  src={item.image1}
-                  alt={item.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-                />
-                <img
-                  src={item.image2}
-                  alt={item.name}
-                  className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                />
+                <div className="w-full aspect-square bg-[#fce8e8] rounded-3xl overflow-hidden relative">
+  <ImageToggle image1={item.image1} image2={item.image2} />
+</div>
               </div>
 
               <div className="mt-2">
