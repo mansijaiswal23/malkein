@@ -38,8 +38,8 @@ export function SignInPage() {
         <div className="bg-white mx-4 mt-5 rounded-2xl shadow-lg px-6 pt-6 pb-8">
           {step === "choose" && (
             <>
-              <h2 className="text-center text-gray-800 font-semibold text-lg mb-1">Welcome Back</h2>
-              <p className="text-center text-gray-400 text-sm mb-">Sign in to your Malkein account</p>
+              <h2 className="text-center text-gray-800 font-semibold text-lg -mb-2">Welcome Back</h2>
+              <p className="text-center text-gray-400 text-sm mt-2 mb-4">Sign in to your Malkein account</p>
 
               {/* Phone option */}
               <div className="flex gap-2 mb-3">
