@@ -16,7 +16,7 @@ function StarRating({ rating }) {
           fill={i < Math.round(value) ? "#DB0000" : "none"}
           color="#DB0000"
         />
-        
+
       ))}
       <span className="ml-1 text-xs font-medium text-gray-800">{rating}</span>
     </span>
@@ -25,53 +25,34 @@ function StarRating({ rating }) {
 
 export default function ProductsGrid() {
   const navigate = useNavigate();
-  const [activeId, setActiveId] = useState({});    
+  const [activeId, setActiveId] = useState({});
   return (
     <div className="px-3 md:px-6 mt-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         {products.map((item) => (
-          <div key={item.id} className="relative pb-4">
+          <div
+            key={item.id}
+            className="relative pb-4 cursor-pointer"
+            onClick={() => navigate(`/product/${item.id}`)}
+          >
 
             {/* Image Card */}
             <div className="bg-[#FF00001F] rounded-3xl overflow-visible relative flex items-end justify-center pt-4 px-4 h-44 md:h-64 group">
+              <div
+                className="absolute inset-0 rounded-3xl overflow-hidden cursor-pointer"
 
-              {/* Clip only the image */}
-             <div
-  // className="absolute inset-0 rounded-3xl overflow-hidden group cursor-pointer"
-//   onClick={() =>
-//   setActiveId(prev => ({
-//     ...prev,
-//     [item.id]: !prev[item.id]
-//   }))
-// }
->
-  {/* First Image */}
-  {/* <img
-    src={item.image1}
-    alt={item.name}
-    className={`w-full h-full object-contain object-bottom absolute inset-0 transition-opacity duration-500 ${
-    activeId[item.id] ? "opacity-0" : "opacity-100"
-  }`}
-  /> */}
 
-  {/* Second Image */}
-  {/* {item.image2 && (
-    <img
-      src={item.image2}
-      alt={item.name}
-      className={`w-full h-full object-contain object-bottom absolute inset-0 transition-opacity duration-500 ${
-      activeId[item.id] ? "opacity-100" : "opacity-0"
-    }`}
-    />
-  )} */}
-  <div className="absolute inset-0 rounded-3xl overflow-hidden">
-    <ImageToggle image1={item.image1} image2={item.image2} />
-  </div>
-</div>
+              >
+                <ImageToggle image1={item.image1} image2={item.image2} onClick={() => navigate(`/product/${item.id}`)}/>
+              </div>
 
               {/* Buy now button */}
               <button
-                onClick={() => navigate(`/product/${item.id}`)}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/product/${item.id}`);
+                }}
                 className="
                   absolute -bottom-4 left-1/2 -translate-x-1/2
                   flex items-center gap-2
@@ -96,7 +77,7 @@ export default function ProductsGrid() {
               <div className="flex justify-between items-center mt-1 flex-wrap gap-1">
                 <span className="flex items-center gap-1 font-large text-gray-900 text-md md:text-lg">
                   ₹{item.price.toLocaleString("en-IN")}
-                 
+
                 </span>
                 <StarRating rating={item.rating} />
               </div>

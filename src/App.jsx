@@ -20,12 +20,14 @@ import {SignInPage} from "./pages/Auth/SignInPage.jsx"
 import {SignUpPage} from "./pages/Auth/SignUpPage.jsx"
 import Category from './pages/Product/Category.jsx'
 import AddToWishlist from './pages/Wishlist/AddToWishlist.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 
 
 const App = () => {
   return (
-
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/banner' element={<Banner />} />
       <Route path='/category-filters' element={<CategoryFilters />} />
@@ -49,6 +51,7 @@ const App = () => {
       <Route path='/category' element={<Category/>}/>
       <Route path="/wishlist" element={<AddToWishlist />} />
     </Routes>
+    </>
 
   )
 }

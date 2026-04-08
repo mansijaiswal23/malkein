@@ -25,7 +25,10 @@ function ProductCard({ item }) {
   const navigate = useNavigate();
 
   return (
-    <div className="relative pb-4">
+    <div
+      className="relative pb-4 cursor-pointer"
+      onClick={() => navigate(`/product/${item.id}`)}
+    >
       {/* Image Card */}
       <div className="bg-[#FF00001F] rounded-3xl overflow-visible relative flex items-end justify-center pt-4 px-4 h-44 md:h-64 group">
         <div className="absolute inset-0 rounded-3xl overflow-hidden">
@@ -54,7 +57,11 @@ function ProductCard({ item }) {
 
         {/* Buy now button */}
         <button
-          onClick={() => navigate(`/product/${item.id}`)}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/product/${item.id}`);
+          }}
           className="
             absolute -bottom-4 left-1/2 -translate-x-1/2
             flex items-center gap-2

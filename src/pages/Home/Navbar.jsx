@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { HeartPlus, ShoppingCart, Menu, X, Search, LogOut, User } from "lucide-react";
 import logo from "../../../src/assets/images/malkein.png";
 import { useCart } from "../../context/CartContext";
@@ -102,8 +102,9 @@ function Avatar({ user }) {
 export default function Navbar() {
   const { cartCount } = useCart();
   const { user, logout } = useAuth();
-  const { wishlistCount } = useWishlist(); // ✅ ADDED
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -231,9 +232,9 @@ export default function Navbar() {
           {/* Cart */}
           <div
             onClick={() => navigate("/cart")}
-            className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95"
+            className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 ${location.pathname === "/cart" ? "text-red-600" : "text-white"}`}
           >
-            <ShoppingCart size={20} className="fill-white text-white" />
+            <ShoppingCart size={20} className="fill-current" />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-[#CC0000] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">
                 {cartCount > 99 ? "99+" : cartCount}
@@ -244,9 +245,9 @@ export default function Navbar() {
           {/* ✅ FIXED Wishlist — correct route + live badge count */}
           <div
             onClick={handleWishlistClick}
-            className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors"
+            className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors ${location.pathname === '/wishlist' || location.pathname === '/empty-wishlist' ? 'text-red-600' : 'text-white'}`}
           >
-            <HeartPlus size={20} className="fill-white text-white" />
+            <HeartPlus size={20} className="fill-current" />
             {wishlistCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-[#CC0000] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">
                 {wishlistCount > 99 ? "99+" : wishlistCount}
@@ -298,9 +299,9 @@ export default function Navbar() {
             {/* ✅ FIXED Mobile Wishlist — correct route + live badge count */}
             <div
               onClick={handleWishlistClick}
-              className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors"
+              className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors ${location.pathname === '/wishlist' || location.pathname === '/empty-wishlist' ? 'text-red-600' : 'text-white'}`}
             >
-              <HeartPlus size={18} />
+              <HeartPlus size={18} className="fill-current" />
               {wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#CC0000] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">
                   {wishlistCount > 99 ? "99+" : wishlistCount}
@@ -310,9 +311,9 @@ export default function Navbar() {
 
             <div
               onClick={() => navigate("/cart")}
-              className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95"
+              className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 ${location.pathname === '/cart' ? 'text-red-600' : 'text-white'}`}
             >
-              <ShoppingCart size={18} />
+              <ShoppingCart size={18} className="fill-current" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#CC0000] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">
                   {cartCount > 99 ? "99+" : cartCount}
