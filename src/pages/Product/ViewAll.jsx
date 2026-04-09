@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../Home/Navbar";
-import Footer from "../Home/Footer";
+
 import Category from "../Product/Category";
 
 export default function ViewAllPage() {
@@ -16,10 +15,10 @@ export default function ViewAllPage() {
 
   return (
     <>
-    <Navbar/>
+   
 
     <Category />
-    <Footer/>
+   
     </>
   );
 }

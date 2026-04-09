@@ -4,17 +4,20 @@ import { HeartPlus, ShoppingCart, Menu, X, Search, LogOut, User } from "lucide-r
 import logo from "../../../src/assets/images/malkein.png";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import { useWishlist } from "../../context/WishlistContext"; // ✅ ADDED
+import { useWishlist } from "../../context/WishlistContext";
+import WomenMegaMenu, { WOMEN_MENU } from "../Category/WomenMegaMenu";
 
+// ── Nav links ──────────────────────────────────────────────────────────────
 const navLinks = [
-  { name: "Bridal", path: "/bridal" },
-  { name: "Women", path: "/women" },
-  { name: "Men", path: "/men" },
+  { name: "Bridal",     path: "/bridal" },
+  { name: "Women",      path: "/women",    hasMega: true },
+  { name: "Men",        path: "/men" },
   { name: "Categories", path: "/category" },
-  { name: "Policies", path: "/policies" },
-  { name: "About", path: "/about" },
+  { name: "Policies",   path: "/policies" },
+  { name: "About",      path: "/about" },
 ];
 
+// ── Search placeholders ────────────────────────────────────────────────────
 const placeholders = [
   "for sarees",
   "for bridal",
@@ -24,6 +27,7 @@ const placeholders = [
   "under 5k",
 ];
 
+// ── Hooks ──────────────────────────────────────────────────────────────────
 function useDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
@@ -31,9 +35,7 @@ function useDropdown() {
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setIsOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target)) setIsOpen(false);
     };
     document.addEventListener("pointerdown", handler);
     return () => document.removeEventListener("pointerdown", handler);
@@ -42,6 +44,7 @@ function useDropdown() {
   return [isOpen, setIsOpen, ref];
 }
 
+// ── Auth dropdowns ─────────────────────────────────────────────────────────
 function AuthDropdown({ onNavigate }) {
   return (
     <div className="absolute right-0 top-12 z-50 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden w-44">
@@ -92,27 +95,43 @@ function Avatar({ user }) {
     <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#DB0000] text-white font-semibold text-sm shrink-0 select-none">
       {user.avatar ? (
         <img src={user.avatar} alt="avatar" className="w-full h-full rounded-full object-cover" />
-      ) : (
-        initials
-      )}
+      ) : initials}
     </div>
   );
 }
 
+// ── Main Navbar ────────────────────────────────────────────────────────────
 export default function Navbar() {
-  const { cartCount } = useCart();
-  const { user, logout } = useAuth();
+  const { cartCount }     = useCart();
+  const { user, logout }  = useAuth();
   const { wishlistCount } = useWishlist();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [menuOpen, setMenuOpen]             = useState(false);
+  const [searchValue, setSearchValue]       = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [womenMenuOpen, setWomenMenuOpen]   = useState(false);
 
-  const [authOpen, setAuthOpen, authRef] = useDropdown();
+  // ── Flicker fix: delay closing so crossing the gap doesn't dismiss menu ──
+  const closeTimer = useRef(null);
+
+  const openWomenMenu = () => {
+    clearTimeout(closeTimer.current);
+    setWomenMenuOpen(true);
+  };
+
+  const scheduleClose = () => {
+    closeTimer.current = setTimeout(() => setWomenMenuOpen(false), 100);
+  };
+
+  // Cleanup on unmount
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  const [authOpen,    setAuthOpen,    authRef]    = useDropdown();
   const [profileOpen, setProfileOpen, profileRef] = useDropdown();
 
+  // Rotate placeholders
   useEffect(() => {
     const id = setInterval(() => {
       setPlaceholderIndex((i) => (i + 1) % placeholders.length);
@@ -132,15 +151,14 @@ export default function Navbar() {
     navigate("/");
   }, [logout, navigate, setProfileOpen]);
 
-  // ✅ Wishlist icon navigates to /wishlist if items exist, else /empty-wishlist
   const handleWishlistClick = () => {
     navigate(wishlistCount > 0 ? "/wishlist" : "/empty-wishlist");
   };
 
   return (
-    <nav className="w-full bg-white shadow-sm">
+    <nav className="w-full bg-white shadow-sm relative z-40">
 
-      {/* ── DESKTOP ── */}
+      {/* ── DESKTOP ─────────────────────────────────────────────────────── */}
       <div className="hidden md:flex items-center justify-between px-8 py-3 gap-6">
 
         {/* Logo */}
@@ -155,18 +173,53 @@ export default function Navbar() {
 
         {/* Nav links */}
         <div className="flex items-center justify-center gap-6 flex-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className="text-black font-inter text-[17.53px] leading-[100%] tracking-[0] hover:text-[#DB0000] transition-colors duration-150"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.hasMega ? (
+              <div
+                key={link.path}
+                className="relative"
+                onMouseEnter={openWomenMenu}
+                onMouseLeave={scheduleClose}
+              >
+                <button
+                  onClick={() => navigate(link.path)}
+                  className={`font-inter text-[17.53px] leading-[100%] tracking-[0] transition-colors duration-150 flex items-center gap-0.5
+                    ${womenMenuOpen ? "text-[#DB0000]" : "text-black hover:text-[#DB0000]"}`}
+                >
+                  {link.name}
+                  <svg
+                    className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${womenMenuOpen ? "rotate-180 text-[#DB0000]" : ""}`}
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                {/*
+                  WomenMegaMenu itself wraps its content in a pt-2 div —
+                  that invisible padding is the hover-bridge over the gap.
+                  We also attach the same open/close handlers on it so
+                  hovering inside the panel cancels any pending close timer.
+                */}
+                {womenMenuOpen && (
+                  <div onMouseEnter={openWomenMenu} onMouseLeave={scheduleClose}>
+                    <WomenMegaMenu onClose={() => setWomenMenuOpen(false)} />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                key={link.path}
+                to={link.path}
+                className="text-black font-inter text-[17.53px] leading-[100%] tracking-[0] hover:text-[#DB0000] transition-colors duration-150"
+              >
+                {link.name}
+              </Link>
+            )
+          )}
         </div>
 
-        {/* Search bar */}
+        {/* Search */}
         <div className="relative flex items-center bg-[#D9D9D9] rounded-[23.62px] px-4 py-3 w-[307.37px] h-[48.46px] overflow-hidden">
           <input
             type="text"
@@ -183,9 +236,7 @@ export default function Navbar() {
                   style={{ transform: `translateY(-${placeholderIndex * 20}px)` }}
                 >
                   {placeholders.map((text, i) => (
-                    <div key={i} className="h-5 text-[#DB0000] text-base">
-                      {text}
-                    </div>
+                    <div key={i} className="h-5 text-[#DB0000] text-base">{text}</div>
                   ))}
                 </div>
               </div>
@@ -200,20 +251,10 @@ export default function Navbar() {
           {/* Auth / Profile */}
           {user ? (
             <div className="relative" ref={profileRef}>
-              <button
-                onClick={() => setProfileOpen((p) => !p)}
-                className="hover:scale-95 transition-transform"
-                title={user.name}
-              >
+              <button onClick={() => setProfileOpen((p) => !p)} className="hover:scale-95 transition-transform" title={user.name}>
                 <Avatar user={user} />
               </button>
-              {profileOpen && (
-                <ProfileDropdown
-                  user={user}
-                  onNavigate={handleNavigate}
-                  onLogout={handleLogout}
-                />
-              )}
+              {profileOpen && <ProfileDropdown user={user} onNavigate={handleNavigate} onLogout={handleLogout} />}
             </div>
           ) : (
             <div className="relative" ref={authRef}>
@@ -223,9 +264,7 @@ export default function Navbar() {
               >
                 Sign in
               </button>
-              {authOpen && (
-                <AuthDropdown onNavigate={handleNavigate} />
-              )}
+              {authOpen && <AuthDropdown onNavigate={handleNavigate} />}
             </div>
           )}
 
@@ -242,10 +281,10 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* ✅ FIXED Wishlist — correct route + live badge count */}
+          {/* Wishlist */}
           <div
             onClick={handleWishlistClick}
-            className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors ${location.pathname === '/wishlist' || location.pathname === '/empty-wishlist' ? 'text-red-600' : 'text-white'}`}
+            className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors ${location.pathname === "/wishlist" || location.pathname === "/empty-wishlist" ? "text-red-600" : "text-white"}`}
           >
             <HeartPlus size={20} className="fill-current" />
             {wishlistCount > 0 && (
@@ -258,10 +297,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ── MOBILE ── */}
+      {/* ── MOBILE ──────────────────────────────────────────────────────── */}
       <div className="md:hidden">
 
-        {/* Mobile top bar */}
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex flex-col items-start">
             <img src={logo} alt="Malkein logo" className="h-8 w-auto" />
@@ -274,13 +312,7 @@ export default function Navbar() {
                 <button onClick={() => setProfileOpen((p) => !p)}>
                   <Avatar user={user} />
                 </button>
-                {profileOpen && (
-                  <ProfileDropdown
-                    user={user}
-                    onNavigate={handleNavigate}
-                    onLogout={handleLogout}
-                  />
-                )}
+                {profileOpen && <ProfileDropdown user={user} onNavigate={handleNavigate} onLogout={handleLogout} />}
               </div>
             ) : (
               <div className="relative" ref={authRef}>
@@ -290,16 +322,13 @@ export default function Navbar() {
                 >
                   Sign in
                 </button>
-                {authOpen && (
-                  <AuthDropdown onNavigate={handleNavigate} />
-                )}
+                {authOpen && <AuthDropdown onNavigate={handleNavigate} />}
               </div>
             )}
 
-            {/* ✅ FIXED Mobile Wishlist — correct route + live badge count */}
             <div
               onClick={handleWishlistClick}
-              className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors ${location.pathname === '/wishlist' || location.pathname === '/empty-wishlist' ? 'text-red-600' : 'text-white'}`}
+              className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 transition-colors ${location.pathname === "/wishlist" || location.pathname === "/empty-wishlist" ? "text-red-600" : "text-white"}`}
             >
               <HeartPlus size={18} className="fill-current" />
               {wishlistCount > 0 && (
@@ -311,7 +340,7 @@ export default function Navbar() {
 
             <div
               onClick={() => navigate("/cart")}
-              className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 ${location.pathname === '/cart' ? 'text-red-600' : 'text-white'}`}
+              className={`relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(217,217,217,0.6)_-6.31%,rgba(115,115,115,0.6)_93.69%)] hover:scale-95 ${location.pathname === "/cart" ? "text-red-600" : "text-white"}`}
             >
               <ShoppingCart size={18} className="fill-current" />
               {cartCount > 0 && (
@@ -352,19 +381,88 @@ export default function Navbar() {
         {/* Mobile nav menu */}
         {menuOpen && (
           <div className="border-t border-gray-100 bg-white px-4 py-3 flex flex-col gap-1 shadow-md">
-            {navLinks.map((link) => (
-              <a
-                key={link.path}
-                href={link.path}
-                onClick={() => setMenuOpen(false)}
-                className="text-sm text-gray-700 hover:text-red-600 font-medium py-2.5 border-b border-gray-50 transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.hasMega ? (
+                <MobileWomenAccordion key={link.path} onClose={() => setMenuOpen(false)} />
+              ) : (
+                <a
+                  key={link.path}
+                  href={link.path}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm text-gray-700 hover:text-red-600 font-medium py-2.5 border-b border-gray-50 transition-colors"
+                >
+                  {link.name}
+                </a>
+              )
+            )}
           </div>
         )}
       </div>
     </nav>
+  );
+}
+
+// ── Mobile Women Accordion ─────────────────────────────────────────────────
+function MobileWomenAccordion({ onClose }) {
+  const [open, setOpen]         = useState(false);
+  const [expanded, setExpanded] = useState(null);
+  const navigate                = useNavigate();
+
+  return (
+    <div className="border-b border-gray-50">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between text-sm text-gray-700 hover:text-red-600 font-medium py-2.5 transition-colors"
+      >
+        Women
+        <svg
+          className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180 text-red-600" : ""}`}
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="pb-3 pl-2 space-y-1">
+          {WOMEN_MENU.map((col) => (
+            <div key={col.title}>
+              <button
+                onClick={() => setExpanded(expanded === col.title ? null : col.title)}
+                className="w-full flex items-center justify-between py-2 pr-1"
+              >
+                <span className="text-[13px] font-semibold" style={{ color: col.color }}>
+                  {col.title}
+                </span>
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${expanded === col.title ? "rotate-180" : ""}`}
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
+                  style={{ color: col.color }}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {expanded === col.title && (
+                <div className="pl-3 pb-1 flex flex-wrap gap-x-3 gap-y-1.5">
+                  {col.sub.map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => {
+                        onClose();
+                        navigate(`/women?category=${encodeURIComponent(col.title)}&sub=${encodeURIComponent(item)}`);
+                      }}
+                      className="text-[12px] text-gray-500 hover:text-gray-900 transition-colors"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

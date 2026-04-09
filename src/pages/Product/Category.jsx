@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Star, Plus, Sparkles, IndianRupee, Heart, MapPin } from 'lucide-react';
 import products from "../../data/products.json";
+import Navbar from '../Home/Navbar';
+import Footer from '../Home/Footer';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -21,8 +23,17 @@ function StarRating({ rating }) {
   );
 }
 
+function getDiscountedPrice(price, discount) {
+  if (!discount) return null;
+  const match = discount.match(/(\d+)%/);
+  if (!match) return null;
+  const pct = parseInt(match[1], 10);
+  return Math.round(price * (1 - pct / 100));
+}
+
 function ProductCard({ item }) {
   const navigate = useNavigate();
+  const discountedPrice = getDiscountedPrice(item.price, item.discount);
 
   return (
     <div
@@ -81,12 +92,25 @@ function ProductCard({ item }) {
       </div>
 
       {/* Product Info */}
-     <div className="mt-8 text-md">
-              <p className="font-medium text-gray-900 text-md md:text-lg truncate">{item.name}</p>
-              <div className="flex justify-between items-center mt-1 flex-wrap gap-1">
-                <span className="flex items-center gap-1 font-large text-gray-900 text-md md:text-lg">
+      <div className="mt-8 text-md">
+        <p className="font-medium text-gray-900 text-md md:text-lg truncate">{item.name}</p>
+        <div className="flex justify-between items-center mt-1 flex-wrap gap-1">
+          {/* Price block */}
+          <span className="flex items-center gap-1.5">
+            {discountedPrice ? (
+              <>
+                <span className="text-gray-400 line-through text-sm md:text-base">
                   ₹{item.price.toLocaleString("en-IN")}
-            
+                </span>
+                <span className="font-semibold text-gray-900 text-md md:text-lg">
+                  ₹{discountedPrice.toLocaleString("en-IN")}
+                </span>
+              </>
+            ) : (
+              <span className="font-semibold text-gray-900 text-md md:text-lg">
+                ₹{item.price.toLocaleString("en-IN")}
+              </span>
+            )}
           </span>
           <StarRating rating={item.rating} />
         </div>
@@ -97,9 +121,9 @@ function ProductCard({ item }) {
 
 // ── section component ─────────────────────────────────────────────────────────
 
-function CategorySection({ title, subtitle, icon: Icon, accentColor, items }) {
+function CategorySection({ title, subtitle, icon: Icon, accentColor, items ,sectionKey }) {
   return (
-    <section className="mb-14">
+    <section id={`section-${sectionKey}`} className="mb-14"  scroll-mt-24>
       {/* Section Header */}
       <div className="flex items-center gap-3 mb-6 px-3 md:px-6">
         {/* Decorative left bar */}
@@ -152,28 +176,28 @@ function CategorySection({ title, subtitle, icon: Icon, accentColor, items }) {
 const CATEGORIES = [
   {
     title: "Designer Wear",
-    sectionKey: "designer-wear",   // 👈 add this
+    sectionKey: "designer-wear",
     subtitle: "Crafted for those who wear art",
     icon: Sparkles,
     accentColor: "#DB0000",
   },
   {
     title: "Under ₹5K",
-    sectionKey: "under-5k",        // 👈 add this
+    sectionKey: "under-5k",
     subtitle: "Style that doesn't break the bank",
     icon: IndianRupee,
     accentColor: "#7C3AED",
   },
   {
     title: "Bridal Lehenga",
-    sectionKey: "bridal-lehenga",  // 👈 add this
+    sectionKey: "bridal-lehenga",
     subtitle: "For the most beautiful day of your life",
     icon: Heart,
     accentColor: "#C2185B",
   },
   {
     title: "Chandni Chowk Bridal",
-    sectionKey: "chandni-chowk-bridal", // 👈 add this
+    sectionKey: "chandni-chowk-bridal",
     subtitle: "Old Delhi's finest — timeless & royal",
     icon: MapPin,
     accentColor: "#B8860B",
@@ -184,37 +208,42 @@ const CATEGORIES = [
 
 export default function Category() {
   return (
-    <div className="py-8 bg-white min-h-screen">
-      {/* Page Title */}
-      <div className="px-3 md:px-6 mb-10">
-        <h1
-          className="text-2xl md:text-4xl font-bold text-[#1a1a1a]"
-          style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
-        >
-          Shop by Category
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Discover curated collections for every occasion
-        </p>
-        {/* Red underline accent */}
-        <div className="mt-3 w-16 h-1 rounded-full bg-[#DB0000]" />
-      </div>
+    <>
+      <Navbar />
+      <div className="py-8 bg-white min-h-screen">
+        {/* Page Title */}
+        <div className="px-3 md:px-6 mb-10">
+          <h1
+            className="text-2xl md:text-4xl font-bold text-[#1a1a1a]"
+            style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
+          >
+            Shop by Category
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Discover curated collections for every occasion
+          </p>
+          {/* Red underline accent */}
+          <div className="mt-3 w-16 h-1 rounded-full bg-[#DB0000]" />
+        </div>
 
-      {/* Render each category section */}
-      {CATEGORIES.map((cat) => {
-  const items = products.filter((p) => p.section === cat.sectionKey);
-  if (!items.length) return null;
-  return (
-    <CategorySection
-      key={cat.title}
-      title={cat.title}
-      subtitle={cat.subtitle}
-      icon={cat.icon}
-      accentColor={cat.accentColor}
-      items={items}
-    />
-  );
-})}
-    </div>
+        {/* Render each category section */}
+        {CATEGORIES.map((cat) => {
+          const items = products.filter((p) => p.section === cat.sectionKey);
+          if (!items.length) return null;
+          return (
+            <CategorySection
+              key={cat.title}
+              title={cat.title}
+              subtitle={cat.subtitle}
+              icon={cat.icon}
+              accentColor={cat.accentColor}
+              items={items}
+              sectionKey={cat.sectionKey}   // ← add this line
+            />
+          );
+        })}
+      </div>
+      <Footer />
+    </>
   );
 }
