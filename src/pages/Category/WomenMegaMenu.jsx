@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 export const WOMEN_MENU = [
   {
     title: "Salwar Kameez",
+    slug: "salwar-kameez",
     color: "#DB0000",
     sub: [
       "Wedding Salwar",
@@ -22,11 +23,13 @@ export const WOMEN_MENU = [
   },
   {
     title: "Gown",
+    slug: "gown",
     color: "#C2185B",
     sub: ["Casual", "A-Line Anarkali", "Net", "Chiffon", "Silk", "Festive"],
   },
   {
     title: "Kurti",
+    slug: "kurti",
     color: "#7C3AED",
     sub: [
       "Casual / Office",
@@ -42,6 +45,7 @@ export const WOMEN_MENU = [
   },
   {
     title: "Saree",
+    slug: "saree",
     color: "#B8860B",
     sub: [
       "Banarsi",
@@ -61,32 +65,19 @@ export const WOMEN_MENU = [
 export default function WomenMegaMenu({ onClose }) {
   const navigate = useNavigate();
 
-  const handleSubClick = (category, sub) => {
+  // /women/salwar-kameez/Wedding%20Salwar
+  const handleSubClick = (slug, sub) => {
     onClose();
-    navigate(
-      `/women?category=${encodeURIComponent(category)}&sub=${encodeURIComponent(sub)}`
-    );
+    navigate(`/women/${slug}/${encodeURIComponent(sub)}`);
   };
 
-  const handleCategoryClick = (category) => {
+  // /women/salwar-kameez
+  const handleCategoryClick = (slug) => {
     onClose();
-    navigate(`/women?category=${encodeURIComponent(category)}`);
+    navigate(`/women/${slug}`);
   };
 
   return (
-    /*
-     * FIX 1 — FLICKER:
-     *   `pt-2` adds an invisible hover-bridge between the trigger button and
-     *   the visible panel. Without this, the small gap between them causes the
-     *   parent's onMouseLeave to fire when the cursor crosses it, collapsing
-     *   the menu. The padding keeps the cursor "inside" the wrapper the whole
-     *   time so the menu stays open.
-     *
-     * FIX 2 — RESPONSIVENESS:
-     *   Width uses `min(780px, 96vw)` so on smaller viewports the panel
-     *   shrinks to fit without overflowing. Padding and font-sizes use
-     *   CSS clamp() so the 4-column layout stays intact at any width.
-     */
     <div
       className="absolute z-50 pt-2"
       style={{
@@ -101,13 +92,13 @@ export default function WomenMegaMenu({ onClose }) {
         {/* Accent bar */}
         <div className="h-1 bg-linear-to-r from-[#DB0000] via-[#7C3AED] to-[#B8860B]" />
 
-        {/* Always 4 cols — fluid padding + font sizes */}
+        {/* 4 columns */}
         <div className="grid grid-cols-4 divide-x divide-gray-100">
           {WOMEN_MENU.map((col) => (
             <div key={col.title} style={{ padding: "clamp(8px, 2vw, 20px)" }}>
               {/* Category heading */}
               <button
-                onClick={() => handleCategoryClick(col.title)}
+                onClick={() => handleCategoryClick(col.slug)}
                 className="flex items-center gap-1 mb-2 group w-full text-left"
               >
                 <span
@@ -131,7 +122,7 @@ export default function WomenMegaMenu({ onClose }) {
                 {col.sub.map((item) => (
                   <li key={item}>
                     <button
-                      onClick={() => handleSubClick(col.title, item)}
+                      onClick={() => handleSubClick(col.slug, item)}
                       className="text-gray-500 hover:text-gray-900 text-left w-full transition-colors duration-150 flex items-center gap-1 group/item"
                       style={{ fontSize: "clamp(9px, 1.1vw, 12.5px)" }}
                     >

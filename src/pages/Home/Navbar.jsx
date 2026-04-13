@@ -6,11 +6,12 @@ import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { useWishlist } from "../../context/WishlistContext";
 import WomenMegaMenu, { WOMEN_MENU } from "../Category/WomenMegaMenu";
+import BridalMegaMenu, { BRIDAL_MENU } from "../Category/BridalMegaMenu";
 
 // ── Nav links ──────────────────────────────────────────────────────────────
 const navLinks = [
-  { name: "Bridal",     path: "/bridal" },
-  { name: "Women",      path: "/women",    hasMega: true },
+  { name: "Bridal",     path: "/bridal",   hasMega: true, menuKey: "bridal"  },
+  { name: "Women",      path: "/women",    hasMega: true, menuKey: "women"   },
   { name: "Men",        path: "/men" },
   { name: "Categories", path: "/category" },
   { name: "Policies",   path: "/policies" },
@@ -111,21 +112,20 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen]             = useState(false);
   const [searchValue, setSearchValue]       = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [womenMenuOpen, setWomenMenuOpen]   = useState(false);
 
-  // ── Flicker fix: delay closing so crossing the gap doesn't dismiss menu ──
+  // ── Unified mega menu state — only one open at a time ──────────────────
+  const [activeMega, setActiveMega] = useState(null); // "bridal" | "women" | null
   const closeTimer = useRef(null);
 
-  const openWomenMenu = () => {
+  const openMega = (key) => {
     clearTimeout(closeTimer.current);
-    setWomenMenuOpen(true);
+    setActiveMega(key);
   };
 
   const scheduleClose = () => {
-    closeTimer.current = setTimeout(() => setWomenMenuOpen(false), 100);
+    closeTimer.current = setTimeout(() => setActiveMega(null), 100);
   };
 
-  // Cleanup on unmount
   useEffect(() => () => clearTimeout(closeTimer.current), []);
 
   const [authOpen,    setAuthOpen,    authRef]    = useDropdown();
@@ -178,32 +178,31 @@ export default function Navbar() {
               <div
                 key={link.path}
                 className="relative"
-                onMouseEnter={openWomenMenu}
+                onMouseEnter={() => openMega(link.menuKey)}
                 onMouseLeave={scheduleClose}
               >
                 <button
                   onClick={() => navigate(link.path)}
                   className={`font-inter text-[17.53px] leading-[100%] tracking-[0] transition-colors duration-150 flex items-center gap-0.5
-                    ${womenMenuOpen ? "text-[#DB0000]" : "text-black hover:text-[#DB0000]"}`}
+                    ${activeMega === link.menuKey ? "text-[#DB0000]" : "text-black hover:text-[#DB0000]"}`}
                 >
                   {link.name}
                   <svg
-                    className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${womenMenuOpen ? "rotate-180 text-[#DB0000]" : ""}`}
+                    className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${activeMega === link.menuKey ? "rotate-180 text-[#DB0000]" : ""}`}
                     viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
                   >
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </button>
 
-                {/*
-                  WomenMegaMenu itself wraps its content in a pt-2 div —
-                  that invisible padding is the hover-bridge over the gap.
-                  We also attach the same open/close handlers on it so
-                  hovering inside the panel cancels any pending close timer.
-                */}
-                {womenMenuOpen && (
-                  <div onMouseEnter={openWomenMenu} onMouseLeave={scheduleClose}>
-                    <WomenMegaMenu onClose={() => setWomenMenuOpen(false)} />
+                {/* Mega menu panel — hover bridge covers the gap */}
+                {activeMega === link.menuKey && (
+                  <div onMouseEnter={() => openMega(link.menuKey)} onMouseLeave={scheduleClose}>
+                    {link.menuKey === "bridal" ? (
+                      <BridalMegaMenu onClose={() => setActiveMega(null)} />
+                    ) : (
+                      <WomenMegaMenu onClose={() => setActiveMega(null)} />
+                    )}
                   </div>
                 )}
               </div>
@@ -382,8 +381,10 @@ export default function Navbar() {
         {menuOpen && (
           <div className="border-t border-gray-100 bg-white px-4 py-3 flex flex-col gap-1 shadow-md">
             {navLinks.map((link) =>
-              link.hasMega ? (
+              link.menuKey === "women" ? (
                 <MobileWomenAccordion key={link.path} onClose={() => setMenuOpen(false)} />
+              ) : link.menuKey === "bridal" ? (
+                <MobileBridalAccordion key={link.path} onClose={() => setMenuOpen(false)} />
               ) : (
                 <a
                   key={link.path}
@@ -399,6 +400,73 @@ export default function Navbar() {
         )}
       </div>
     </nav>
+  );
+}
+
+// ── Mobile Bridal Accordion ────────────────────────────────────────────────
+function MobileBridalAccordion({ onClose }) {
+  const [open, setOpen]         = useState(false);
+  const [expanded, setExpanded] = useState(null);
+  const navigate                = useNavigate();
+
+  return (
+    <div className="border-b border-gray-50">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between text-sm text-gray-700 hover:text-red-600 font-medium py-2.5 transition-colors"
+      >
+        Bridal
+        <svg
+          className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180 text-red-600" : ""}`}
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="pb-3 pl-2 space-y-1">
+          {BRIDAL_MENU.map((col) => (
+            <div key={col.title}>
+              <button
+                onClick={() => setExpanded(expanded === col.title ? null : col.title)}
+                className="w-full flex items-center justify-between py-2 pr-1"
+              >
+                <span className="text-[13px] font-semibold" style={{ color: col.color }}>
+                  {col.title}
+                </span>
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${expanded === col.title ? "rotate-180" : ""}`}
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
+                  style={{ color: col.color }}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {expanded === col.title && (
+                <div className="pl-3 pb-1 flex flex-wrap gap-x-3 gap-y-1.5">
+                  {col.sub.map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => {
+                        onClose();
+                        navigate(
+                          `/bridal?category=${encodeURIComponent(col.title)}&sub=${encodeURIComponent(item)}`
+                        );
+                      }}
+                      className="text-[12px] text-gray-500 hover:text-gray-900 transition-colors"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

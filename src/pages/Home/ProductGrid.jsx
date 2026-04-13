@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import products from "../../data/products.json";
-import { Star, Plus } from 'lucide-react';
+import { Star,ShoppingBag } from 'lucide-react';
+
 import { ImageToggle } from '../../components/ImageToggle';
 
 
@@ -53,6 +54,7 @@ export default function ProductsGrid() {
                 </div>
 
                 {/* Buy now button */}
+                <div>
                 <button
                   type="button"
                   onClick={(e) => {
@@ -71,10 +73,37 @@ export default function ProductsGrid() {
                   "
                 >
                   <span className="w-6 h-6 rounded-full bg-black flex items-center justify-center shrink-0">
-                    <Plus size={15} className="fill-white text-white" />
+                    <ShoppingBag size={15} className="
+                     text-white" />
                   </span>
-                  Buy now
+                  Shop now
                 </button>
+                </div>
+                <div>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/product/${item.id}`);
+                  }}
+                  className="
+                    absolute -bottom-4 left-1/2 -translate-x-1/2
+                    flex items-center gap-2
+                    bg-[#D9D9D9] text-black text-xs font-medium
+                    pl-1 pr-4 py-1 rounded-[7.08px]
+                    shadow-md z-10 whitespace-nowrap
+                    transition-all duration-200
+                    hover:bg-[#DB0000] hover:text-white hover:shadow-lg hover:scale-105 cursor-pointer
+                    active:scale-95
+                  "
+                >
+                  <span className="w-6 h-6 rounded-full bg-black flex items-center justify-center shrink-0">
+                    <ShoppingBag size={15} className=" text-white" />
+                  </span>
+                  Shop now
+                </button>
+                </div>
               </div>
 
               {/* Product Info */}

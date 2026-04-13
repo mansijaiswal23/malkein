@@ -11,7 +11,7 @@ export default function ViewAllButton() {
         onClick={() => navigate("/view-all")}
         className="
           flex items-center gap-2
-          bg-[#D9D9D9] text-black text-xs font-medium
+          bg-[#D9D9D9] text-black text-sm font-medium
           pl-1 pr-4 py-1 rounded-[7.08px]
           shadow-md whitespace-nowrap
           transition-all duration-200
@@ -21,7 +21,7 @@ export default function ViewAllButton() {
       >
         {/* Circle arrow icon */}
         <span className="
-          w-6 h-6 rounded-full
+          w-8 h-6 rounded-full
           group-hover:bg-red-300
           flex items-center justify-center
           text-black group-hover:text-white

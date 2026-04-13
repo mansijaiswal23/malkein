@@ -1,18 +1,15 @@
-import Footer from "../Home/Footer"
-import Navbar from "../Home/Navbar"
+import React from 'react'
+import Navbar from '../Home/Navbar'  
+import Footer from '../Home/Footer'  
 
 const Women = () => {
-    return (
-        <>
-            <Navbar />
-            <div>
-
-                Coming soon 📍
-
-            </div>
-            <Footer />
-        </>
-    )
+  return (
+    <div>
+      <Navbar/>
+      Hi This Is women's section.
+      <Footer/>
+    </div>
+  )
 }
 
 export default Women

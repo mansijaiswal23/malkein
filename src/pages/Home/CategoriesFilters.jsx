@@ -47,7 +47,7 @@ export default function CategoryFilters() {
       <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 scrollbar-none">
         {categories.map((cat, index) => (
           <button
-            key={index}
+            key={index} 
             onClick={() => handleClick(index, cat.sectionKey)}
             className={`
               group whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 rounded-full border text-sm

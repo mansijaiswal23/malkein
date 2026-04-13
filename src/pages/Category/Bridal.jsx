@@ -1,5 +1,7 @@
 import Footer from "../Home/Footer"
 import Navbar from "../Home/Navbar"
+import BridalDropdown from "./BridalMegaMenu";
+
 const lehengas = [
   {
     id: 1,
@@ -91,6 +93,7 @@ export default function Bridal() {
   return (
     <>
     <Navbar/>
+    <BridalDropdown />
     <div className="min-h-screen p-6">
       
       {/* Header */}
